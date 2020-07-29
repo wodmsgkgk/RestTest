@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -20,14 +21,13 @@ import com.wodms.lotteontest.databinding.ItemViewBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    val photoLiveData = MutableLiveData<List<Photo>>()
+    private val viewModel: PhotoReposViewModel by viewModels<PhotoReposViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
 
         binding.myRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -35,21 +35,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.funcButton.setOnClickListener { view ->
-            PhotoReposViewModel().getTaskListsObservable().subscribe {
-                photoLiveData.postValue(it)
+            viewModel.getTaskListsObservable().subscribe {
+                viewModel.photoLiveData.postValue(it)
             }
         }
 
-        photoLiveData.observe(this, Observer {
+        viewModel.photoLiveData.observe(this, Observer {
             (binding.myRecyclerView.adapter as PhotoAdapter).setData(it)
         })
 
-//        Glide.with(this).load("https://via.placeholder.com/150/f66b97").into(binding.testImg);
     }
 }
 
-class PhotoReposViewModel {
+class PhotoReposViewModel : ViewModel() {
     private val repository = PhotoRepository()
+    val photoLiveData = MutableLiveData<List<Photo>>()
 
     fun getTaskListsObservable() =
         repository.getTaskList().toObservable()
