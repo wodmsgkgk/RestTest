@@ -2,6 +2,7 @@ package com.wodms.lotteontest
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -13,9 +14,6 @@ import com.wodms.lotteontest.model.Photo
 import com.wodms.lotteontest.presenter.MainPresenter
 import com.wodms.lotteontest.view.adapter.PhotoAdapter
 import com.wodms.lotteontest.view.model.PhotoViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainPresenter.View {
@@ -40,15 +38,11 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         }
 
         binding.funcButton.setOnClickListener { view ->
-            GlobalScope.launch {
-                searchPhoto()
-            }
+            searchPhoto()
         }
 
         viewModel.photoLiveData.observe(this, Observer {
-            GlobalScope.launch(Dispatchers.Main) {
-                (binding.myRecyclerView.adapter as PhotoAdapter).setData(it)
-            }
+            (binding.myRecyclerView.adapter as PhotoAdapter).setData(it)
         })
     }
 
@@ -57,10 +51,10 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
     }
 
     override fun onDataFailed() {
-        Log.d("test", "onDataFailed")
+        Toast.makeText(this@MainActivity, "Data Loding Fail", Toast.LENGTH_SHORT).show()
     }
 
     override fun searchPhoto() {
-        presenter.getPhotoList()
+        viewModel.getPhotoList(presenter)
     }
 }
