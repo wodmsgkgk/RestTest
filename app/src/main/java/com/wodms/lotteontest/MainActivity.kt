@@ -18,6 +18,9 @@ import com.bumptech.glide.RequestManager
 import com.squareup.picasso.Picasso
 import com.wodms.lotteontest.databinding.ActivityMainBinding
 import com.wodms.lotteontest.databinding.ItemViewBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -35,15 +38,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.funcButton.setOnClickListener { view ->
-            viewModel.getTaskListsObservable().subscribe {
-                viewModel.photoLiveData.postValue(it)
+            GlobalScope.launch {
+                viewModel.getTaskListsObservable().subscribe {
+                    viewModel.photoLiveData.postValue(it)
+                }
             }
         }
 
         viewModel.photoLiveData.observe(this, Observer {
-            (binding.myRecyclerView.adapter as PhotoAdapter).setData(it)
+            GlobalScope.launch(Dispatchers.Main) {
+                (binding.myRecyclerView.adapter as PhotoAdapter).setData(it)
+            }
         })
-
     }
 }
 
@@ -61,7 +67,7 @@ class PhotoReposViewModel : ViewModel() {
 
 class PhotoAdapter(private var myDataset: List<Photo>) :
     RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
-    lateinit var glide : RequestManager
+    lateinit var glide: RequestManager
 
     class PhotoViewHolder(val binding: ItemViewBinding) : RecyclerView.ViewHolder(binding.root)
 
