@@ -1,4 +1,4 @@
-package com.wodms.lotteontest
+package com.wodms.lotteontest.model
 
 import com.google.gson.annotations.SerializedName
 

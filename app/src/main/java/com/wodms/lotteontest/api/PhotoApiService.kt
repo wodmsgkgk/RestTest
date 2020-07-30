@@ -1,10 +1,11 @@
-package com.wodms.lotteontest
+package com.wodms.lotteontest.api
 
+import com.wodms.lotteontest.model.Photo
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface PhotoApi {
+interface PhotoApiService {
     @GET("photos")
     fun getPhotos(): Single<List<Photo>>
 

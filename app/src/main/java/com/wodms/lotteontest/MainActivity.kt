@@ -1,36 +1,38 @@
 package com.wodms.lotteontest
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.squareup.picasso.Picasso
+import com.wodms.lotteontest.api.DaggerPhotoListComponent
+import com.wodms.lotteontest.api.PhotoListModule
 import com.wodms.lotteontest.databinding.ActivityMainBinding
-import com.wodms.lotteontest.databinding.ItemViewBinding
+import com.wodms.lotteontest.model.Photo
+import com.wodms.lotteontest.presenter.MainPresenter
+import com.wodms.lotteontest.view.adapter.PhotoAdapter
+import com.wodms.lotteontest.view.model.PhotoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainPresenter.View {
+    @Inject
+    lateinit var presenter: MainPresenter
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: PhotoReposViewModel by viewModels<PhotoReposViewModel>()
+    private val viewModel: PhotoViewModel by viewModels<PhotoViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        var component = DaggerPhotoListComponent.builder()
+            .photoListModule(PhotoListModule(this))
+            .build()
+        component.inject(this)
 
         binding.myRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -39,9 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.funcButton.setOnClickListener { view ->
             GlobalScope.launch {
-                viewModel.getTaskListsObservable().subscribe {
-                    viewModel.photoLiveData.postValue(it)
-                }
+                searchPhoto()
             }
         }
 
@@ -51,46 +51,16 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-}
 
-class PhotoReposViewModel : ViewModel() {
-    private val repository = PhotoRepository()
-    val photoLiveData = MutableLiveData<List<Photo>>()
-
-    fun getTaskListsObservable() =
-        repository.getTaskList().toObservable()
-
-    fun getPhotoObservable(id: Long) =
-        repository.getTask(id).toObservable()
-}
-
-
-class PhotoAdapter(private var myDataset: List<Photo>) :
-    RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
-    lateinit var glide: RequestManager
-
-    class PhotoViewHolder(val binding: ItemViewBinding) : RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): PhotoAdapter.PhotoViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_view, parent, false)
-        glide = Glide.with(view)
-        return PhotoViewHolder(ItemViewBinding.bind(view))
+    override fun onDataLoaded(response: List<Photo>) {
+        viewModel.photoLiveData.postValue(response)
     }
 
-    override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        holder.binding.titleText.text = myDataset[position].title
-//        glide.load(myDataset[position].thumbnailUrl).into(holder.binding.thumbnailImage)
-        Picasso.get().load(myDataset[position].thumbnailUrl).into(holder.binding.thumbnailImage)
+    override fun onDataFailed() {
+        Log.d("test", "onDataFailed")
     }
 
-    override fun getItemCount() = myDataset.size
-
-    fun setData(newData: List<Photo>) {
-        myDataset = newData
-        notifyDataSetChanged()
+    override fun searchPhoto() {
+        presenter.getPhotoList()
     }
 }
