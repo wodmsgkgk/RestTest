@@ -4,6 +4,7 @@ import com.wodms.lotteontest.model.Photo
 
 interface MainPresenter {
     fun getPhotoList()
+    fun onViewDestroyed()
 
     interface View{
         fun onDataLoaded(response : List<Photo>)

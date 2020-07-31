@@ -46,6 +46,11 @@ class MainActivity : AppCompatActivity(), MainPresenter.View {
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.onViewDestroyed()
+    }
+
     override fun onDataLoaded(response: List<Photo>) {
         viewModel.photoLiveData.postValue(response)
     }
