@@ -8,9 +8,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PhotoApiClient @Inject constructor(provideOkHttpClient: OkHttpClient) {
-    val BASE_URL = "https://jsonplaceholder.typicode.com/"
-    val userDataService: PhotoApiService
+class UserApiClient @Inject constructor(provideOkHttpClient: OkHttpClient) {
+    val BASE_URL = "https://api.github.com"
+    val userDataService: UserApiService
 
     init {
         val retrofit =
@@ -20,6 +20,6 @@ class PhotoApiClient @Inject constructor(provideOkHttpClient: OkHttpClient) {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
-        userDataService = retrofit.create(PhotoApiService::class.java)
+        userDataService = retrofit.create(UserApiService::class.java)
     }
 }

@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module(includes = [ApiClientModule::class])
-class PhotoListModule(val view: MainPresenter.View) {
+class UserListModule(val view: MainPresenter.View) {
 
     @Provides
     fun provideMainPresenter(presenter: MainPresenterImpl) : MainPresenter {

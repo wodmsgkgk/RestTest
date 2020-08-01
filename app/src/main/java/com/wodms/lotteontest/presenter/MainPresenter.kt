@@ -1,14 +1,14 @@
 package com.wodms.lotteontest.presenter
 
-import com.wodms.lotteontest.model.Photo
+import com.wodms.lotteontest.model.SearchResponse
 
 interface MainPresenter {
-    fun getPhotoList()
+    fun getUserList(q: String)
     fun onViewDestroyed()
 
     interface View{
-        fun onDataLoaded(response : List<Photo>)
+        fun onDataLoaded(storeResponse: SearchResponse)
         fun onDataFailed()
-        fun searchPhoto()
+        fun searchUser(searchWord: String)
     }
 }

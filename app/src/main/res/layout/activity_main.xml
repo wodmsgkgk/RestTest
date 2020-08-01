@@ -1,34 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:paddingLeft="10dp"
     tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="0dp"
+        android:layout_height="41dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginBottom="2dp"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/my_recycler_view"
+        app:layout_constraintEnd_toStartOf="@+id/func_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6"
+        tools:text="input" />
 
     <Button
         android:id="@+id/func_button"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="TEST"
-        tools:ignore="MissingConstraints" />
-
-<!--    <ImageView
-        android:id="@+id/test_img"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="50dp"
-        tools:ignore="MissingConstraints"/>-->
+        android:layout_width="51dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="5dp"
+        android:background="@android:drawable/ic_menu_search"
+        app:layout_constraintBottom_toTopOf="@+id/my_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_text"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_recycler_view"
-        android:layout_width="419dp"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:scrollbars="vertical"
-        tools:layout_editor_absoluteX="-8dp"
-        tools:layout_editor_absoluteY="152dp"
-        tools:ignore="MissingConstraints"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/func_button" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

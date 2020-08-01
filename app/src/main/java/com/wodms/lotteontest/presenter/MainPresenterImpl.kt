@@ -1,20 +1,22 @@
 package com.wodms.lotteontest.presenter
 
-import android.annotation.SuppressLint
-import com.wodms.lotteontest.api.PhotoApiClient
+import com.wodms.lotteontest.api.UserApiClient
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class MainPresenterImpl @Inject constructor(
     val view: MainPresenter.View,
-    val client: PhotoApiClient
+    val client: UserApiClient
 ) : MainPresenter {
     val compositeDisposable: CompositeDisposable by lazy { CompositeDisposable() }
 
-    @SuppressLint("CheckResult")
-    override fun getPhotoList() {
-        client.userDataService.getPhotos()
-            .toObservable().subscribe({ view.onDataLoaded(it) }, { view.onDataFailed() }, {})
+    override fun getUserList(q: String) {
+        client.userDataService.getUserData(q, "repositories", "desc")
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({view.onDataLoaded(it)},{view.onDataFailed()},{})
             .apply { compositeDisposable.add(this) }
     }
 

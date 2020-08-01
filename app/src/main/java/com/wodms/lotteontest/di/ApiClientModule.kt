@@ -18,8 +18,8 @@ class ApiClientModule {
 
 
     @Provides
-    fun provideGithubUserApiClient(): PhotoApiClient {
-        return PhotoApiClient(provideOkHttpClient())
+    fun provideGithubUserApiClient(): UserApiClient {
+        return UserApiClient(provideOkHttpClient())
     }
 
 }
